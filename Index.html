@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LG전자 B2B 해외출장 매니저</title>
+    <!-- Tailwind CSS CDN 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome 아이콘 CDN 로드 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Noto Sans KR, Inter) 로드 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- 정식 Excel 파일(.xlsx)을 브라우저 단독으로 빌드하기 위한 SheetJS 라이브러리 로드 -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- 정식 PowerPoint 파일(.pptx)을 빌드하고 내부에 이미지 개체를 안전하게 임베딩하기 위한 PptxGenJS 라이브러리 로드 -->
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <!-- Excel 파일 내에 이미지를 임베딩하기 위한 ExcelJS 라이브러리 로드 -->
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+
+    <!-- Tailwind 테마 커스텀 설정 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lgRed: {
+                            DEFAULT: '#A50034', // LG Deep Red 메인 브랜드 컬러
+                            dark: '#800026',    // 버튼 hover 시 사용할 어두운 Red
+                            light: '#FFEBEE',   // 배경 등에 사용할 연한 Red
+                        },
+                        charcoal: {
+                            DEFAULT: '#262626', // 고급스러운 차콜 배경
+                            dark: '#171717',    // 더 어두운 톤의 차콜
+                            light: '#404040',   // 서브 텍스트용 차콜
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- 커스텀 스타일시트 (app.css) 로드 -->
+    <link rel="stylesheet" href="app.css">
+</head>
+
+<body class="bg-charcoal text-gray-800 font-sans min-h-screen flex justify-center items-center p-0 sm:p-4">
+
+    <!-- 모바일 화면(웹뷰)에 100% 최적화된 반응형 웹 컨테이너 (최대 가로폭 max-w-md, 중앙 정렬) -->
+    <div
+        class="w-full max-w-md min-h-screen sm:min-h-[850px] sm:max-h-[900px] sm:rounded-3xl bg-white shadow-2xl flex flex-col overflow-hidden relative border border-gray-100">
+
+        <!-- ================= 헤더 영역 (Header) ================= -->
+        <header class="bg-lgRed text-white shadow-md z-10 flex flex-col">
+            <!-- 로고 및 서비스 타이틀 영역 -->
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-2">
+                    <!-- LG전자 시그니처 마크 SVG 정교하게 복원 배치 -->
+                    <svg viewBox="0 0 100 100" class="w-8 h-8 flex-shrink-0" aria-label="LG Logo">
+                        <!-- 빨간색 원형 배경 -->
+                        <circle cx="50" cy="50" r="48" fill="#A50034" />
+                        <!-- 바깥쪽 G 라인 -->
+                        <path d="M 50 14 A 36 36 0 1 0 86 50 L 86 44" fill="none" stroke="#FFFFFF" stroke-width="6.5"
+                            stroke-linecap="round" />
+                        <!-- 안쪽 L 코/입 라인 -->
+                        <path d="M 50 28 L 50 64 L 75 64" fill="none" stroke="#FFFFFF" stroke-width="6.5"
+                            stroke-linecap="round" />
+                        <!-- 왼쪽 눈 (점) -->
+                        <circle cx="36" cy="40" r="5.5" fill="#FFFFFF" />
+                    </svg>
+
+                    <!-- 타이틀 병기 -->
+                    <div class="border-l border-white/30 pl-2">
+                        <h1 class="text-sm font-bold tracking-tight">LG전자 B2B</h1>
+                        <p class="text-[10px] text-red-200 font-medium -mt-1">해외출장 매니저</p>
+                    </div>
+                </div>
+
+                <!-- LLM 보고서 추출 버튼 -->
+                <button onclick="openExportModal()"
+                    class="bg-white text-lgRed hover:bg-red-50 text-xs font-bold px-3 py-1.5 rounded-full transition-all duration-200 flex items-center gap-1.5 shadow-sm active:scale-95">
+                    <i class="fa-solid fa-file-export"></i>
+                    <span>LLM 보고서 추출</span>
+                </button>
+            </div>
+
+            <!-- ================= 이중 시계 바 (한국 + 출장지 시간) ================= -->
+            <div id="dual-clock-bar" class="px-4 pb-2.5 pt-0">
+                <div
+                    class="bg-white/10 backdrop-blur-sm rounded-xl px-3 py-2 flex items-center justify-between border border-white/20">
+                    <!-- 한국 시간 (KST) -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-base">🇰🇷</span>
+                        <div>
+                            <p class="text-[9px] text-red-200 font-semibold leading-none mb-0.5">대한민국 (KST)</p>
+                            <p id="clock-korea" class="text-sm font-bold text-white tracking-widest leading-none">
+                                --:--:--</p>
+                        </div>
+                    </div>
+
+                    <!-- 구분선 -->
+                    <div class="h-8 w-px bg-white/25"></div>
+
+                    <!-- 출장지 시간 (동적) + 국가 변경 버튼 -->
+                    <div class="flex items-center gap-2">
+                        <span id="clock-dest-flag" class="text-base">🌏</span>
+                        <div>
+                            <p id="clock-dest-label" class="text-[9px] text-red-200 font-semibold leading-none mb-0.5">
+                                출장지 시간</p>
+                            <p id="clock-dest" class="text-sm font-bold text-white tracking-widest leading-none">
+                                --:--:--</p>
+                        </div>
+                        <!-- 국가 변경 버튼 -->
+                        <button onclick="openClockCountryModal()"
+                            class="ml-1 bg-white/20 hover:bg-white/35 text-white rounded-full w-5 h-5 flex items-center justify-center transition active:scale-90"
+                            title="출장지 국가 변경">
+                            <i class="fa-solid fa-pen text-[8px]"></i>
+                        </button>
+                    </div>
+
+                    <!-- 시간차 배지 -->
+                    <div id="clock-diff-badge" class="bg-white/20 rounded-full px-2 py-0.5">
+                        <span id="clock-diff-text" class="text-[10px] font-bold text-white">±0h</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ================= 시계 국가 변경 모달 ================= -->
+        <div id="clock-country-modal"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-end sm:items-center p-0 sm:p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[80vh]"
+                id="clock-country-modal-content">
+                <!-- 모달 헤더 -->
+                <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-100 flex-shrink-0">
+                    <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-lgRed"></i>
+                        출장지 시계 국가 선택
+                    </h3>
+                    <button onclick="closeClockCountryModal()" class="text-gray-400 hover:text-gray-600 transition p-1">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <!-- 검색 -->
+                <div class="px-4 py-3 flex-shrink-0">
+                    <div class="relative">
+                        <i
+                            class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="clock-country-search" placeholder="국가명 검색..."
+                            oninput="filterClockCountries(this.value)"
+                            class="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent">
+                    </div>
+                </div>
+                <!-- 국가 목록 -->
+                <div id="clock-country-list" class="overflow-y-auto flex-1 px-4 pb-4 space-y-1">
+                    <!-- JS 동적 렌더링 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 메인 콘텐츠 영역 (스크롤 가능) ================= -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 pb-24">
+
+            <!-- 상단 출장 기본 정보 보드 (모든 탭 상시 노출) -->
+            <section class="p-4 bg-white border-b border-gray-200 shadow-sm relative">
+                <div id="trip-info-container">
+                    <!-- JS 동적 렌더링 (일반 상태 / 편집 상태) -->
+                </div>
+            </section>
+
+            <!-- [1번 탭] 출장 일정 (Schedule) -->
+            <section id="tab-schedule" class="tab-content p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-days text-lgRed"></i>
+                        출장 일정 (Schedule)
+                    </h2>
+                    <span class="text-xs text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full" id="schedule-count">0개
+                        일정</span>
+                </div>
+
+                <!-- 항공편 정보 컨테이너 -->
+                <div id="flight-info-container" class="space-y-4"></div>
+
+                <!-- 일정 목록 컨테이너 -->
+                <div id="schedule-list" class="space-y-3">
+                    <!-- JS로 동적 렌더링 -->
+                </div>
+
+                <!-- 일정 추가 폼 -->
+                <div class="mt-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-plus text-lgRed"></i>
+                        새로운 일정 추가
+                    </h3>
+                    <form id="add-schedule-form" onsubmit="handleAddSchedule(event)" class="space-y-3">
+                        <!-- 날짜 선택 (달력 피커) -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">📅 날짜 선택</label>
+                            <input type="date" id="sched-date"
+                                class="w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent"
+                                onchange="onSchedDateChange()">
+                        </div>
+                        <!-- 일정 구분 텍스트 (날짜 선택 시 자동 채워지고 직접 수정도 가능) -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">일정 구분 레이블 <span
+                                    class="text-gray-400 font-normal">(날짜 선택 시 자동 입력)</span></label>
+                            <input type="text" id="sched-day" required placeholder="예: Day 6 또는 5/31"
+                                class="w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 mb-1">⏰ 시간</label>
+                                <input type="time" id="sched-time" required
+                                    class="w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 mb-1">미팅 상대</label>
+                                <input type="text" id="sched-partner" required placeholder="예: 시드니 지사"
+                                    class="w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">안건</label>
+                            <input type="text" id="sched-topic" required placeholder="안건 및 목적 입력"
+                                class="w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">구글맵 위치 링크 (선택사항)</label>
+                            <div class="flex gap-1.5">
+                                <input type="url" id="sched-map" placeholder="https://maps.google.com/?q=..."
+                                    class="flex-1 text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent">
+                                <button type="button" onclick="openLocationSearchModal('sched-map')"
+                                    class="bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 px-3 rounded-lg transition active:scale-95 flex items-center justify-center gap-1 text-xs font-bold"
+                                    title="위치 검색">
+                                    <i class="fa-solid fa-magnifying-glass-location text-lgRed text-sm"></i> 검색
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-lgRed text-white font-bold text-sm py-2 rounded-lg hover:bg-lgRed-dark transition duration-200 active:scale-[0.98]">
+                            <i class="fa-solid fa-plus mr-1"></i> 일정 추가하기
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- [2번 탭] 회의록 (Meeting Notes) — AI 요약 에디터 스타일 -->
+            <section id="tab-meetings" class="tab-content hidden" style="padding:0">
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!-- STEP A: 업로드 & AI 설정 화면 -->
+                <!-- ══════════════════════════════════════════════════ -->
+                <div id="minutes-step-upload" class="p-4 space-y-4">
+
+                    <!-- 헤더 -->
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="p-1.5 bg-gradient-to-tr from-lgRed to-red-700 rounded-lg text-white shadow">
+                            <i class="fa-solid fa-file-signature text-sm"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-sm font-black text-gray-900">AI 회의록 자동 요약</h2>
+                            <p class="text-[9px] text-lgRed font-bold">TEXT MINUTES ANALYZER · Powered by Gemini</p>
+                        </div>
+                        <span
+                            class="ml-auto text-[9px] bg-red-50 text-lgRed border border-red-200 px-2 py-0.5 rounded-full font-bold animate-pulse">●
+                            텍스트 기반 분석</span>
+                    </div>
+
+                    <!-- Gemini API Key 설정 (접기/펼치기) -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-key text-blue-600 text-xs"></i>
+                            <span class="text-[10px] font-bold text-blue-800">Gemini API Key</span>
+                            <div id="api-key-status" class="text-[9px] flex-1"></div>
+                            <button onclick="toggleApiKeySection()" id="api-key-toggle-btn"
+                                class="text-[10px] text-blue-600 underline font-semibold">입력하기</button>
+                        </div>
+                        <div id="api-key-section" class="hidden mt-2 space-y-1">
+                            <div class="flex gap-1.5">
+                                <input type="password" id="gemini-api-key-input" placeholder="AIza... API Key"
+                                    class="flex-1 text-[10px] px-2 py-1.5 border border-blue-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                                <button onclick="saveApiKey()"
+                                    class="bg-blue-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg">저장</button>
+                                <button onclick="clearApiKey()"
+                                    class="bg-gray-200 text-gray-600 text-[10px] px-2 py-1.5 rounded-lg">초기화</button>
+                            </div>
+                            <p class="text-[9px] text-blue-500"><a href="https://aistudio.google.com/app/apikey"
+                                    target="_blank" class="underline">API Key 발급 →</a> (브라우저 로컬에만 저장)</p>
+                        </div>
+                    </div>
+
+                    <!-- 입력 방식 탭 -->
+                    <div class="bg-gray-100 p-1 rounded-xl flex gap-1">
+                        <button id="min-tab-audio" onclick="switchMinutesTab('audio')"
+                            class="flex-1 py-1.5 text-[11px] font-bold rounded-lg bg-white text-gray-800 shadow-sm flex items-center justify-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-file-import text-lgRed"></i> 텍스트 파일 업로드
+                        </button>
+                        <button id="min-tab-text" onclick="switchMinutesTab('text')"
+                            class="flex-1 py-1.5 text-[11px] font-medium rounded-lg text-gray-500 flex items-center justify-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-file-lines"></i> 텍스트 직접 입력
+                        </button>
+                    </div>
+
+                    <!-- 텍스트 파일 업로드 존 -->
+                    <div id="min-audio-zone" class="space-y-2">
+                        <div id="min-dropzone"
+                            class="border-2 border-dashed border-gray-300 hover:border-lgRed bg-white rounded-xl p-6 text-center cursor-pointer transition-all duration-200 group relative overflow-hidden">
+                            <input type="file" id="audio-file-input" accept=".txt,.md,.json,.csv,.log" class="hidden"
+                                onchange="handleMinutesFileSelect(event.target.files[0])">
+                            <div id="dropzone-default">
+                                <div
+                                    class="p-3 bg-red-50 rounded-xl inline-flex mb-2 group-hover:scale-105 transition-transform">
+                                    <i class="fa-solid fa-file-arrow-up text-2xl text-lgRed"></i>
+                                </div>
+                                <p class="text-xs font-bold text-gray-700">회의 텍스트 파일을 드래그하거나 클릭하여 선택</p>
+                                <p class="text-[10px] text-gray-400 mt-1">.txt · .md · .json · .csv · .log 지원</p>
+                                <p class="text-[9px] text-green-600 font-semibold mt-1">★ 전문 회의 기록 관리자 페르소나 및 4단 표준 템플릿
+                                    요약</p>
+                            </div>
+                            <!-- 선택된 파일 정보 (기본 숨김) -->
+                            <div id="min-file-info" class="hidden items-center gap-3 text-left">
+                                <div class="p-2 bg-lgRed rounded-lg text-white flex-shrink-0">
+                                    <i class="fa-solid fa-file-lines text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p id="min-file-name" class="text-xs font-bold text-gray-800 truncate"></p>
+                                    <p id="min-file-size" class="text-[10px] text-gray-500"></p>
+                                </div>
+                                <button onclick="resetMinutesFile()"
+                                    class="text-gray-400 hover:text-red-500 p-1 transition flex-shrink-0">
+                                    <i class="fa-solid fa-trash-can text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- AI 분석 프로그레스 (기존 스타일 유지, 히든) -->
+                        <div id="analysis-progress-container" class="hidden space-y-2 bg-white rounded-xl p-3 border">
+                            <div class="flex items-center justify-between text-xs text-lgRed font-bold">
+                                <span class="animate-pulse flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-nodes animate-spin"></i>
+                                    <span id="analysis-status-text">텍스트 파일 파싱 중...</span>
+                                </span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                <div id="analysis-progress-bar"
+                                    class="bg-lgRed h-2 rounded-full transition-all duration-100" style="width:0%">
+                                </div>
+                            </div>
+                            <p id="analysis-detail-text" class="text-[10px] text-gray-500"></p>
+                        </div>
+                    </div>
+
+                    <!-- 텍스트 직접 입력 존 -->
+                    <div id="min-text-zone" class="hidden">
+                        <div class="bg-white border border-gray-200 rounded-xl p-3 shadow-sm">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">회의
+                                원본 텍스트 / 대화 메모</label>
+                            <textarea id="min-text-input" rows="6"
+                                class="w-full text-xs text-gray-700 placeholder-gray-400 focus:outline-none resize-none"
+                                placeholder="받아적은 회의 내용, 메신저 대화 등을 붙여넣으세요.&#10;&#10;예시:&#10;김민수: 오늘 디자인 시안 확인했나요?&#10;이서연: 네, 하단 탭바 구조로 설계했습니다."></textarea>
+                            <div class="flex justify-between items-center border-t border-gray-100 pt-2 mt-1">
+                                <span id="min-char-counter" class="text-[10px] text-gray-400">0자</span>
+                                <button onclick="loadMinutesSample()"
+                                    class="text-[10px] text-lgRed font-semibold flex items-center gap-1">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> 샘플 불러오기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI 분석 설정 패널 -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-3.5 shadow-sm space-y-3">
+                        <h3
+                            class="text-xs font-bold text-gray-800 flex items-center gap-1.5 border-b border-gray-100 pb-2">
+                            <i class="fa-solid fa-sliders text-lgRed text-sm"></i> AI 분석 정교화 설정
+                        </h3>
+                        <!-- 회의 주제 -->
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">회의 주제
+                                / 프로젝트명 (선택)</label>
+                            <input type="text" id="min-subject"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-lgRed/20 focus:border-lgRed text-gray-700 placeholder-gray-400 transition-all"
+                                placeholder="예: 호주 파트너사 B2B 협의">
+                        </div>
+                        <!-- 참석 인원 / 요약 스타일 가로 배치 -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">예상
+                                    참석 인원</label>
+                                <select id="min-speakers"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-lgRed/20 text-gray-700 transition-all">
+                                    <option value="auto" selected>자동 탐색</option>
+                                    <option value="2">2인 (1:1 대화)</option>
+                                    <option value="3">3인 소규모</option>
+                                    <option value="4">4인 이상 팀</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">요약
+                                    스타일</label>
+                                <select id="min-style"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-lgRed/20 text-gray-700 transition-all">
+                                    <option value="bullet" selected>개조식 요약</option>
+                                    <option value="narrative">스토리 형태</option>
+                                    <option value="standard">표준 포맷</option>
+                                    <option value="brief">5줄 초간단</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 특별 지시 -->
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">특별
+                                지시사항 (선택)</label>
+                            <textarea id="min-custom-prompt" rows="2"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-lgRed/20 text-gray-700 placeholder-gray-400 resize-none transition-all"
+                                placeholder="예: 계약 관련 결정사항 위주로 정리해줘"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 분석 시작 버튼 -->
+                    <button id="min-start-btn" onclick="startMinutesAnalysis()"
+                        class="w-full bg-gray-200 text-gray-400 font-bold text-sm py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-not-allowed">
+                        <i class="fa-solid fa-bolt"></i> AI 분석 및 회의록 생성 시작
+                    </button>
+
+                    <!-- 저장된 회의록 이력 -->
+                    <div class="space-y-2 pt-2">
+                        <h3 class="text-xs font-bold text-gray-700 flex items-center justify-between px-1">
+                            <span class="flex items-center gap-1.5"><i
+                                    class="fa-solid fa-clock-rotate-left text-gray-400 text-xs"></i> 저장된 회의록</span>
+                            <div class="flex items-center gap-2">
+                                <span id="meetings-count" class="text-[10px] font-normal text-gray-400">0개</span>
+                                <button onclick="clearAllMeetings()"
+                                    class="text-[9px] text-red-500 hover:text-red-700 hover:bg-red-50 px-1.5 py-0.5 rounded border border-red-200 transition flex items-center gap-0.5 active:scale-95"
+                                    title="모든 회의록 이력 삭제">
+                                    <i class="fa-regular fa-trash-can"></i> 비우기
+                                </button>
+                            </div>
+                        </h3>
+                        <div id="meetings-list" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!-- STEP B: AI 분석 로딩 화면 -->
+                <!-- ══════════════════════════════════════════════════ -->
+                <div id="minutes-step-loading" class="hidden p-6 text-center space-y-6">
+                    <!-- 스피너 -->
+                    <div class="relative w-20 h-20 mx-auto">
+                        <div class="absolute inset-0 rounded-full border-4 border-gray-100"></div>
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-lgRed border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="p-3 bg-lgRed text-white rounded-full shadow-lg animate-pulse">
+                                <i class="fa-solid fa-microphone-lines text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 id="min-loading-title" class="text-base font-extrabold text-gray-900">AI 엔진에 음성 전송 중...</h3>
+                        <p id="min-loading-desc" class="text-xs text-gray-500 mt-1 leading-relaxed max-w-xs mx-auto">오디오
+                            데이터를 안전하게 인코딩하여 Gemini 멀티모달 AI로 전달 중입니다.</p>
+                    </div>
+                    <!-- 3단계 진행 표시 -->
+                    <div
+                        class="bg-white border border-gray-200 rounded-xl p-4 space-y-4 text-left max-w-xs mx-auto shadow-sm">
+                        <!-- Step 1 -->
+                        <div class="flex items-center gap-3 transition-all" id="mstep-upload">
+                            <div id="mstep-icon-upload"
+                                class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold bg-gray-100 text-gray-500 flex-shrink-0">
+                                1</div>
+                            <div class="flex-1">
+                                <span class="text-xs font-semibold text-gray-700 block">파일 로드 및 컨텍스트 파싱</span>
+                                <span id="mstep-desc-upload" class="text-[10px] text-gray-400">오디오 버퍼 및 설정 구성</span>
+                            </div>
+                            <span id="mstep-badge-upload" class="text-[10px] text-gray-400">대기 중</span>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="flex items-center gap-3 transition-all" id="mstep-stt">
+                            <div id="mstep-icon-stt"
+                                class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold bg-gray-100 text-gray-500 flex-shrink-0">
+                                2</div>
+                            <div class="flex-1">
+                                <span class="text-xs font-semibold text-gray-700 block">음성 분석 (STT & 화자 분리)</span>
+                                <span id="mstep-desc-stt" class="text-[10px] text-gray-400">실제 발화 전사 진행 중</span>
+                            </div>
+                            <span id="mstep-badge-stt" class="text-[10px] text-gray-400">대기 중</span>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="flex items-center gap-3 transition-all" id="mstep-summary">
+                            <div id="mstep-icon-summary"
+                                class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold bg-gray-100 text-gray-500 flex-shrink-0">
+                                3</div>
+                            <div class="flex-1">
+                                <span class="text-xs font-semibold text-gray-700 block">회의록 구조화 및 Action Item 추출</span>
+                                <span id="mstep-desc-summary" class="text-[10px] text-gray-400">핵심 의사결정 분류 중</span>
+                            </div>
+                            <span id="mstep-badge-summary" class="text-[10px] text-gray-400">대기 중</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!-- STEP C: 결과 대시보드 화면 -->
+                <!-- ══════════════════════════════════════════════════ -->
+                <div id="minutes-step-result" class="hidden p-4 space-y-4">
+                    <!-- 결과 헤더 -->
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="space-y-1 flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span
+                                    class="bg-red-50 text-lgRed border border-red-200 text-[10px] px-2 py-0.5 rounded-md font-bold">✅
+                                    음성 분석 완료</span>
+                                <span id="min-result-date" class="text-[10px] text-gray-500">🗓️ 2026.05.30</span>
+                            </div>
+                            <h2 id="min-result-title" class="text-sm font-extrabold text-gray-900 truncate">회의 분석 보고서
+                            </h2>
+                        </div>
+                        <div class="flex items-center gap-1.5 flex-shrink-0">
+                            <button onclick="goToMinutesUpload()"
+                                class="bg-white border border-gray-200 text-gray-600 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold flex items-center gap-1 transition hover:bg-gray-50">
+                                <i class="fa-solid fa-rotate-right text-xs"></i> 다시
+                            </button>
+                            <button onclick="copyMinutesResult()"
+                                class="bg-lgRed text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1 transition hover:bg-lgRed-dark">
+                                <i class="fa-solid fa-copy text-xs"></i> 복사
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 회의 개요 카드 -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-3.5 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-lgRed rounded-l-xl"></div>
+                        <h3
+                            class="text-xs font-bold text-gray-800 flex items-center gap-1.5 border-b border-gray-100 pb-2 mb-2.5">
+                            <i class="fa-solid fa-bookmark text-lgRed text-xs"></i> 회의 개요
+                        </h3>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <span class="text-gray-400 block text-[10px] font-semibold mb-0.5">회의 일시</span>
+                                <span id="min-meta-date" class="font-bold text-gray-700 text-xs"></span>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <span class="text-gray-400 block text-[10px] font-semibold mb-0.5">참석자</span>
+                                <span id="min-meta-participants"
+                                    class="font-bold text-gray-700 text-xs leading-tight"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 전문 회의록 표준 마크다운 결과 에디터 카드 -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-3.5 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-lgRed rounded-l-xl"></div>
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-2 mb-3">
+                            <h3 class="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-invoice text-lgRed text-xs"></i> 4단 표준 회의록 마크다운 (편집 가능)
+                            </h3>
+                            <span class="text-[9px] bg-red-50 text-lgRed font-bold px-2 py-0.5 rounded">표준 포맷</span>
+                        </div>
+                        <textarea id="min-markdown-editor" rows="12"
+                            class="w-full text-[11px] font-mono text-gray-700 bg-gray-50 border border-gray-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-lgRed resize-y"
+                            placeholder="회의록 마크다운 결과가 여기에 나타납니다."></textarea>
+                    </div>
+
+                    <!-- 의사결정 & 논의 요약 카드 -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-3.5 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-xl"></div>
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-2 mb-3">
+                            <h3 class="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check text-emerald-500 text-xs"></i> 의사결정 및 논의 요약
+                            </h3>
+                            <span class="text-[9px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded">AI
+                                추출</span>
+                        </div>
+                        <div id="min-decisions" class="space-y-3 text-xs text-gray-600 leading-relaxed">
+                            <!-- JS 동적 렌더링 -->
+                        </div>
+                    </div>
+
+                    <!-- Action Items 인터랙티브 체크리스트 -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-3.5 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-violet-500 rounded-l-xl"></div>
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-2 mb-3">
+                            <h3 class="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-list-check text-violet-500 text-xs"></i> Action Items
+                            </h3>
+                            <button onclick="addMinutesActionItem()"
+                                class="text-[10px] text-lgRed font-bold flex items-center gap-1 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition">
+                                <i class="fa-solid fa-plus text-xs"></i> 추가
+                            </button>
+                        </div>
+                        <div id="min-action-items" class="space-y-2">
+                            <!-- JS 동적 렌더링 -->
+                        </div>
+                    </div>
+
+                    <!-- 전체 대화 텍스트 -->
+                    <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="p-3 border-b border-gray-200 bg-gray-50 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-message text-lgRed text-xs"></i> 전체 대화 텍스트
+                                </h3>
+                                <span id="min-speaker-badge"
+                                    class="text-[10px] bg-red-50 text-lgRed font-bold px-2 py-0.5 rounded-md border border-red-100">화자
+                                    분리</span>
+                            </div>
+                            <!-- 대화 검색 -->
+                            <div class="relative">
+                                <i
+                                    class="fa-solid fa-magnifying-glass text-gray-400 absolute left-2.5 top-2 text-xs"></i>
+                                <input type="text" id="min-transcript-search" oninput="searchMinutesTranscript()"
+                                    class="w-full text-[10px] bg-white border border-gray-200 rounded-lg pl-7 pr-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-lgRed"
+                                    placeholder="대화 내용 검색...">
+                            </div>
+                        </div>
+                        <div id="min-transcript-list"
+                            class="p-3 overflow-y-auto space-y-3 max-h-72 text-xs bg-gray-50/50">
+                            <!-- JS 동적 렌더링 -->
+                        </div>
+                        <div class="p-2 bg-gray-100 border-t border-gray-200 text-center text-[10px] text-gray-400">
+                            <i class="fa-solid fa-pen-to-square text-xs mr-1"></i>화자 이름과 텍스트를 클릭하여 직접 수정 가능
+                        </div>
+                    </div>
+
+                    <!-- 회의록 저장 버튼 -->
+                    <button onclick="saveMinutesResult()" id="min-save-btn"
+                        class="w-full bg-lgRed hover:bg-lgRed-dark text-white font-bold text-sm py-3 rounded-xl transition flex items-center justify-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-floppy-disk"></i> 회의록 저장 (이력에 추가)
+                    </button>
+
+                    <!-- 저장된 회의록 이력 (결과 화면 하단) -->
+                    <div class="space-y-2 pt-1">
+                        <h3 class="text-xs font-bold text-gray-700 flex items-center justify-between px-1">
+                            <span class="flex items-center gap-1.5"><i
+                                    class="fa-solid fa-clock-rotate-left text-gray-400 text-xs"></i> 저장된 회의록</span>
+                            <div class="flex items-center gap-2">
+                                <span id="meetings-count-2" class="text-[10px] font-normal text-gray-400">0개</span>
+                                <button onclick="clearAllMeetings()"
+                                    class="text-[9px] text-red-500 hover:text-red-700 hover:bg-red-50 px-1.5 py-0.5 rounded border border-red-200 transition flex items-center gap-0.5 active:scale-95"
+                                    title="모든 회의록 이력 삭제">
+                                    <i class="fa-regular fa-trash-can"></i> 비우기
+                                </button>
+                            </div>
+                        </h3>
+                        <div id="meetings-list-2" class="space-y-2"></div>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- [3번 탭] 현장 사진 (Field Photos) -->
+            <section id="tab-photos" class="tab-content p-4 hidden">
+                <h2 class="text-base font-bold text-gray-800 flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-camera-retro text-lgRed"></i>
+                    현장 사진 (Field Photos)
+                </h2>
+
+                <!-- 다중 이미지 업로드 존 (multiple 속성 확실히 지원) -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 text-center">
+                    <label
+                        class="cursor-pointer block py-4 border-2 border-dashed border-gray-300 hover:border-lgRed rounded-lg bg-gray-50 transition-all duration-200">
+                        <i class="fa-solid fa-images text-2xl text-gray-400 mb-1"></i>
+                        <span class="block text-xs font-bold text-gray-600">다중 사진 업로드</span>
+                        <span class="block text-[10px] text-gray-400 mt-0.5">고용량 원본 파일 자동 최적화 압축 지원 (퀄리티 0.6), 최대
+                            100장</span>
+                        <input type="file" id="multiple-photos-input" multiple accept="image/*" class="hidden"
+                            onchange="handleMultiplePhotosUpload(event)">
+                    </label>
+                </div>
+
+                <!-- 2열 미리보기 및 메모 갤러리 그리드 -->
+                <div id="photos-grid" class="grid grid-cols-2 gap-3">
+                    <!-- JS 동적 렌더링 -->
+                </div>
+
+                <div id="photos-empty-state" class="text-center py-10 text-gray-400 hidden">
+                    <i class="fa-regular fa-image text-4xl mb-2"></i>
+                    <p class="text-xs">등록된 현장 사진이 없습니다.</p>
+                </div>
+            </section>
+
+            <!-- [4번 탭] 체크리스트 (Checklist) -->
+            <section id="tab-checklist" class="tab-content p-4 hidden">
+                <h2 class="text-base font-bold text-gray-800 flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-clipboard-check text-lgRed"></i>
+                    체크리스트 (Checklist)
+                </h2>
+
+                <!-- 새 항목 추가 폼 -->
+                <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 mb-5">
+                    <form id="checklist-form" onsubmit="handleAddChecklistItem(event)" class="flex gap-2">
+                        <input type="text" id="checklist-input" required placeholder="출장 준비물 추가..."
+                            class="flex-1 text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent">
+                        <button type="submit"
+                            class="bg-lgRed hover:bg-lgRed-dark text-white font-bold text-sm px-4 py-2 rounded-lg transition duration-200 active:scale-95">
+                            <i class="fa-solid fa-plus"></i> 추가
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 체크리스트 아이템들 -->
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-100 overflow-hidden">
+                    <ul id="checklist-list" class="divide-y divide-gray-100">
+                        <!-- JS 동적 렌더링 -->
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ================= 하단 네비게이션 바 (Bottom Nav) ================= -->
+        <nav
+            class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-10 shadow-lg sm:rounded-b-3xl">
+            <button onclick="switchTab('schedule')" id="btn-tab-schedule"
+                class="flex flex-col items-center gap-0.5 text-lgRed font-bold text-xs py-1 px-3 transition-colors duration-200">
+                <i class="fa-solid fa-calendar-days text-lg"></i>
+                <span>일정</span>
+            </button>
+            <button onclick="switchTab('meetings')" id="btn-tab-meetings"
+                class="flex flex-col items-center gap-0.5 text-gray-400 hover:text-lgRed text-xs py-1 px-3 transition-colors duration-200">
+                <i class="fa-solid fa-microphone-lines text-lg"></i>
+                <span>회의록</span>
+            </button>
+            <button onclick="switchTab('photos')" id="btn-tab-photos"
+                class="flex flex-col items-center gap-0.5 text-gray-400 hover:text-lgRed text-xs py-1 px-3 transition-colors duration-200">
+                <i class="fa-solid fa-camera-retro text-lg"></i>
+                <span>사진</span>
+            </button>
+            <button onclick="switchTab('checklist')" id="btn-tab-checklist"
+                class="flex flex-col items-center gap-0.5 text-gray-400 hover:text-lgRed text-xs py-1 px-3 transition-colors duration-200">
+                <i class="fa-solid fa-clipboard-check text-lg"></i>
+                <span>체크리스트</span>
+            </button>
+        </nav>
+
+        <!-- ================= 모달: LLM 보고서 추출 옵션 모달 ================= -->
+        <div id="export-modal"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl scale-95 transition-transform duration-300"
+                id="export-modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-lgRed"></i>
+                        LLM 보고서 추출
+                    </h3>
+                    <button onclick="closeExportModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-5 leading-relaxed">
+                    저장된 해외 출장 일정, 회의록, 현장 사진 및 체크리스트 데이터를 바탕으로 Gemini B2B 요약 인공지능이 전문 보고서 파일을 생성합니다.
+                </p>
+
+                <!-- 옵션 버튼 목록 -->
+                <div class="space-y-3" id="export-modal-buttons">
+                    <button onclick="triggerExport('excel')"
+                        class="w-full flex items-center justify-between p-3.5 bg-green-50 hover:bg-green-100 border border-green-200 rounded-xl text-left transition duration-200 group">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-regular fa-file-excel text-2xl text-green-600"></i>
+                            <div>
+                                <p class="text-sm font-bold text-green-900">Excel로 추출</p>
+                                <p class="text-[10px] text-green-600 font-medium">데이터 테이블 중심 원본 데이터 저장</p>
+                            </div>
+                        </div>
+                        <i
+                            class="fa-solid fa-chevron-right text-green-400 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+
+                    <button onclick="triggerExport('ppt')"
+                        class="w-full flex items-center justify-between p-3.5 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl text-left transition duration-200 group">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-regular fa-file-powerpoint text-2xl text-orange-600"></i>
+                            <div>
+                                <p class="text-sm font-bold text-orange-900">PowerPoint로 추출</p>
+                                <p class="text-[10px] text-orange-600 font-medium">시각 자료 중심 발표 보고서용 포맷</p>
+                            </div>
+                        </div>
+                        <i
+                            class="fa-solid fa-chevron-right text-orange-400 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+
+                    <!-- [신규] PPT AI 시장조사 요약 내용 수동 관리 버튼 -->
+                    <button onclick="openPptAiSummaryModal()"
+                        class="w-full flex items-center justify-between p-3 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl text-left transition duration-200 group">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-wand-magic-sparkles text-xl text-lgRed animate-pulse"></i>
+                            <div>
+                                <p class="text-xs font-bold text-red-900">PPT AI 요약 내용 편집</p>
+                                <p class="text-[9px] text-lgRed font-medium">무료 AI 요약 프롬프트 복사 & 결과 설정</p>
+                            </div>
+                        </div>
+                        <i
+                            class="fa-solid fa-chevron-right text-red-400 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+
+                <!-- 추출 진행 애니메이션 영역 -->
+                <div id="export-loading-container" class="hidden text-center py-6 space-y-4">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div class="absolute inset-0 rounded-full border-4 border-gray-100"></div>
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-lgRed border-t-transparent animate-spin">
+                        </div>
+                        <i
+                            class="fa-solid fa-wand-magic-sparkles text-xl text-lgRed absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-sm font-bold text-gray-800">문서 요약 및 파일 생성 중</p>
+                        <p class="text-[11px] text-gray-500 leading-normal px-4">
+                            "Gemini LLM이 저장된 모든 일정, 회의록, 현장 사진을 취합하여 문서를 생성 중입니다..."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 전체 데이터 초기화 커스텀 모달 (Premium Alert Modal) ================= -->
+        <div id="reset-confirm-modal"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-end sm:items-center p-0 sm:p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col p-6 space-y-4 transform translate-y-10 transition-transform duration-300"
+                id="reset-confirm-modal-content">
+                <!-- 경고 아이콘 및 헤더 -->
+                <div class="text-center space-y-2">
+                    <div
+                        class="w-12 h-12 bg-red-50 text-lgRed rounded-full flex items-center justify-center mx-auto text-xl animate-bounce">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-900">앱 데이터 전체 초기화</h3>
+                    <p class="text-xs text-gray-500 leading-normal">
+                        정말로 앱의 모든 데이터를 초기화하시겠습니까?<br>
+                        이 작업은 출장지 정보, 일정, 체크리스트는 물론 <strong>저장된 모든 현장 사진(IndexedDB)</strong>을 영구적으로 삭제하며 복구할 수 없습니다.
+                    </p>
+                </div>
+
+                <!-- 버튼 영역 -->
+                <div class="flex gap-2">
+                    <button onclick="closeResetConfirmModal()"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-3 rounded-xl transition active:scale-95">
+                        취소
+                    </button>
+                    <button onclick="executeAllDataReset()"
+                        class="flex-1 bg-lgRed hover:bg-lgRed-dark text-white text-xs font-bold py-3 rounded-xl transition active:scale-95 shadow-lg shadow-red-900/10">
+                        <i class="fa-solid fa-trash-can mr-1"></i> 전면 초기화
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 회의록 개별/일괄 삭제 커스텀 모달 (Meeting Delete Modal) ================= -->
+        <div id="meeting-delete-modal"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-end sm:items-center p-0 sm:p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col p-6 space-y-4 transform translate-y-10 transition-transform duration-300"
+                id="meeting-delete-modal-content">
+                <!-- 경고 아이콘 및 헤더 -->
+                <div class="text-center space-y-2">
+                    <div
+                        class="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto text-xl">
+                        <i class="fa-regular fa-trash-can animate-pulse"></i>
+                    </div>
+                    <h3 id="delete-modal-title" class="text-base font-bold text-gray-900">회의록 삭제</h3>
+                    <p id="delete-modal-desc" class="text-xs text-gray-500 leading-normal">
+                        정말로 이 회의록을 삭제하시겠습니까?<br>
+                        삭제된 회의록 정보는 다시 복구할 수 없습니다.
+                    </p>
+                </div>
+
+                <!-- 임시 저장용 ID 값 홀더 -->
+                <input type="hidden" id="delete-target-id" value="">
+
+                <!-- 버튼 영역 -->
+                <div class="flex gap-2">
+                    <button onclick="closeMeetingDeleteModal()"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-3 rounded-xl transition active:scale-95">
+                        취소
+                    </button>
+                    <button onclick="executeMeetingDelete()"
+                        class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-3 rounded-xl transition active:scale-95 shadow-lg shadow-red-950/10">
+                        <i class="fa-solid fa-trash-can mr-1"></i> 삭제하기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 항공편 수동 수정 모달 (Flight Edit Modal) ================= -->
+        <div id="flight-edit-modal"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-end sm:items-center p-0 sm:p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col p-6 space-y-4 max-h-[85vh] overflow-y-auto"
+                id="flight-edit-modal-content">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-plane text-lgRed"></i>
+                        항공편 정보 수정
+                    </h3>
+                    <button onclick="closeFlightEditModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <input type="hidden" id="edit-flight-type" value="">
+
+                <div class="space-y-3 text-left">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">편명</label>
+                            <input type="text" id="edit-flight-no" required placeholder="예: KE121"
+                                class="w-full text-xs px-2.5 py-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">항공사</label>
+                            <input type="text" id="edit-flight-airline" placeholder="예: 대한항공"
+                                class="w-full text-xs px-2.5 py-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">출발지 공항 코드</label>
+                            <input type="text" id="edit-flight-dep-code" required placeholder="예: ICN"
+                                class="w-full text-xs px-2.5 py-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">도착지 공항 코드</label>
+                            <input type="text" id="edit-flight-arr-code" required placeholder="예: SYD"
+                                class="w-full text-xs px-2.5 py-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">출발 시간</label>
+                            <input type="time" id="edit-flight-dep-time" required
+                                class="w-full text-xs px-2.5 py-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">도착 시간</label>
+                            <input type="time" id="edit-flight-arr-time" required
+                                class="w-full text-xs px-2.5 py-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <input type="checkbox" id="edit-flight-next-day"
+                            class="w-3.5 h-3.5 text-lgRed focus:ring-lgRed border-gray-300 rounded">
+                        <label for="edit-flight-next-day" class="text-xs font-bold text-gray-600">하루 뒤(+1일)에 공항에
+                            도착함</label>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">예약 코드</label>
+                        <input type="text" id="edit-flight-booking" placeholder="예약코드 문자열 입력"
+                            class="w-full text-xs px-2.5 py-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">상세 안내 문구</label>
+                        <textarea id="edit-flight-note" rows="2" placeholder="체크인 안내사항 등"
+                            class="w-full text-xs px-2.5 py-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">공항 위치 지도 링크 (선택)</label>
+                        <div class="flex gap-1.5">
+                            <input type="url" id="edit-flight-map" placeholder="https://maps.google.com/?q=..." class="w-full text-xs px-2.5 py-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none">
+                            <button type="button" onclick="openLocationSearchModal('edit-flight-map')"
+                                class="bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 px-2.5 rounded-lg transition active:scale-95 flex items-center justify-center gap-1 text-xs font-bold"
+                                title="공항 위치 검색">
+                                <i class="fa-solid fa-magnifying-glass-location text-lgRed"></i> 검색
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button onclick="closeFlightEditModal()"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-3 rounded-xl transition active:scale-95">
+                        취소
+                    </button>
+                    <button onclick="saveFlightEdit()"
+                        class="flex-1 bg-lgRed hover:bg-lgRed-dark text-white text-xs font-bold py-3 rounded-xl transition active:scale-95 shadow-md">
+                        적용하기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 항공편 실시간 찾기/검색 모달 (Flight Search Modal) ================= -->
+        <div id="flight-search-modal"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-end sm:items-center p-0 sm:p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col p-6 space-y-4 max-h-[80vh]"
+                id="flight-search-modal-content">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-plane-departure text-lgRed"></i>
+                        실시간 항공편 검색 및 선택
+                    </h3>
+                    <button onclick="closeFlightSearchModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- 검색바 -->
+                <div class="relative">
+                    <i
+                        class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                    <input type="text" id="flight-search-input" placeholder="편명 또는 항공사 검색 (예: KE121)"
+                        oninput="filterFlightsSearch(this.value)"
+                        class="w-full pl-8 pr-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent">
+                </div>
+
+                <!-- 항공편 목록 리스트 -->
+                <div id="flight-search-list" class="overflow-y-auto flex-1 space-y-2 max-h-[45vh] pr-1">
+                    <!-- JS로 동적 렌더링 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= [신규] 구글맵 위치 검색 및 선택 모달 (Location Search Modal) ================= -->
+        <div id="location-search-modal"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-end sm:items-center p-0 sm:p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col p-6 space-y-4 max-h-[80vh]"
+                id="location-search-modal-content">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-lgRed"></i>
+                        구글맵 위치 검색 및 링크 자동 선택
+                    </h3>
+                    <button type="button" onclick="closeLocationSearchModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- 검색어 입력 영역 -->
+                <form onsubmit="event.preventDefault(); searchLocation();" class="flex gap-1.5">
+                    <input type="text" id="location-search-input" placeholder="검색할 장소나 빌딩, 도시명 입력 (예: 도쿄 타워)"
+                        class="flex-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-lgRed focus:border-transparent">
+                    <button type="submit"
+                        class="bg-lgRed hover:bg-lgRed-dark text-white text-xs font-bold px-4 py-2 rounded-xl transition duration-150 active:scale-95 shadow-sm">
+                        검색
+                    </button>
+                </form>
+
+                <!-- 검색 로딩 스피너 -->
+                <div id="location-search-loading" class="hidden text-center py-4">
+                    <i class="fa-solid fa-circle-notch animate-spin text-lgRed text-xl"></i>
+                    <p class="text-[10px] text-gray-400 mt-1">전세계 위치 정보를 검색 중입니다...</p>
+                </div>
+
+                <!-- 검색 결과 리스트 -->
+                <div id="location-search-results" class="overflow-y-auto flex-1 space-y-2 max-h-[45vh] pr-1">
+                    <p class="text-center text-xs text-gray-400 py-6">검색어를 입력하고 검색 버튼을 눌러주세요.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= [신규] PPT AI 시장조사 요약 수동 에디터 모달 (PPT AI Summary Modal) ================= -->
+        <div id="ppt-ai-summary-modal"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-end sm:items-center p-0 sm:p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col p-6 space-y-4 max-h-[85vh] overflow-y-auto"
+                id="ppt-ai-summary-modal-content">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-lgRed"></i>
+                        PPT용 AI 시장조사 요약 편집
+                    </h3>
+                    <button type="button" onclick="closePptAiSummaryModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="bg-red-50/50 border border-red-100 rounded-xl p-3 space-y-2">
+                    <h4 class="text-xs font-bold text-lgRed flex items-center gap-1.5">
+                        <i class="fa-solid fa-robot"></i> 무료 AI로 3단 요약 생성하기
+                    </h4>
+                    <p class="text-[10px] text-gray-500 leading-normal">
+                        Gemini나 Copilot 무료 웹버전을 켜고 아래 복사한 프롬프트를 붙여넣으세요. 출력된 요약 결과를 복제하여 하단에 붙여넣으면 PPT에 완벽하게 반영됩니다.
+                    </p>
+                    <button type="button" onclick="copyAISummaryPrompt()"
+                        class="w-full bg-white hover:bg-red-50 text-lgRed border border-red-200 text-xs font-bold py-2 rounded-lg transition active:scale-95 flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-copy"></i> 무료 AI 요약용 프롬프트 복사
+                    </button>
+                </div>
+
+                <!-- 수동 입력 폼 또는 JSON 일괄 입력 -->
+                <div class="space-y-3 flex-1 min-h-0 flex flex-col">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-[10px] text-gray-400 font-bold">AI 요약 결과 일괄 붙여넣기 (JSON 또는 텍스트)</label>
+                            <button type="button" onclick="parseAndApplyJSONSummary()" class="text-[9px] text-blue-600 font-bold hover:underline">자동 파싱 및 채우기</button>
+                        </div>
+                        <textarea id="ppt-ai-json-input" rows="2" placeholder="AI가 답변해준 JSON 데이터( slides: [...] )를 여기에 붙여넣어주세요." class="w-full text-[10px] font-mono p-2 border rounded-lg focus:ring-1 focus:ring-lgRed focus:outline-none bg-gray-50 resize-none"></textarea>
+                    </div>
+
+                    <!-- 슬라이드 단위 에디터 리스트 컨테이너 -->
+                    <div class="border-t pt-2.5 flex-1 min-h-0 flex flex-col">
+                        <h4 class="text-xs font-bold text-gray-700 mb-2 flex items-center justify-between">
+                            <span>📝 슬라이드별 상세 수정</span>
+                            <span class="text-[9px] text-gray-400 font-normal">슬라이드별 수동 타이핑 수정 가능</span>
+                        </h4>
+                        <div id="ppt-ai-slides-editor-container" class="space-y-3 overflow-y-auto pr-1 flex-1 max-h-[30vh]">
+                            <!-- JS 동적 생성 -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 border-t pt-3 flex-shrink-0">
+                    <button type="button" onclick="closePptAiSummaryModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-3 rounded-xl transition active:scale-95">
+                        닫기
+                    </button>
+                    <button type="button" onclick="savePptAiSummaries()" class="flex-1 bg-lgRed hover:bg-lgRed-dark text-white text-xs font-bold py-3 rounded-xl transition active:scale-95 shadow-md">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> 변경사항 저장
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= 비즈니스 로직 JavaScript ================= -->
+    <script src="app.js"></script>
+</body>
+
+</html>
