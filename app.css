@@ -1,0 +1,271 @@
+/* ==========================================================================
+   LG전자 B2B 해외출장 매니저 - 커스텀 스타일시트 (app.css)
+   ========================================================================== */
+
+/* 1. 커스텀 스크롤바 디자인 */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #A50034;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #800026;
+}
+
+/* 2. 프리미엄 항공표 티켓 스타일 UI (Ticket Design System) */
+.ticket-card {
+    position: relative;
+    background: #FFF5F7;
+    /* LG Red 연한 틴트 배경 */
+    border: 1.5px solid #FAD2DB;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(165, 0, 52, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ticket-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(165, 0, 52, 0.08);
+    border-color: #F3A0B3;
+}
+
+/* 티켓 뜯는 선 및 좌우 반원 홈(Notch) */
+.ticket-divider-container {
+    position: relative;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+.ticket-notch-left,
+.ticket-notch-right {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #F9FAFB;
+    /* 부모 컨테이너(gray-50) 배경과 동일하게 맞춤 */
+    border: 1.5px solid #FAD2DB;
+    border-radius: 50%;
+    z-index: 5;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.ticket-notch-left {
+    left: -8px;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%, 50% 100%, 0% 50%);
+    /* 오른쪽 반원만 노출 */
+}
+
+.ticket-notch-right {
+    right: -8px;
+    clip-path: polygon(0% 0%, 50% 0%, 100% 50%, 50% 100%, 0% 100%);
+    /* 왼쪽 반원만 노출 */
+}
+
+.ticket-dashed-line {
+    width: 90%;
+    border-top: 1.5px dashed #F3A0B3;
+    margin: 0 auto;
+    height: 1px;
+}
+
+/* 항공편 경로 라인 및 비행기 아이콘 */
+.flight-path-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 40px;
+}
+
+.flight-path-line {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, #F3A0B3, #A50034, #F3A0B3);
+    position: relative;
+}
+
+.flight-path-airplane {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #FFF5F7;
+    padding: 0 8px;
+    color: #A50034;
+    font-size: 14px;
+    z-index: 2;
+    animation: flightPulse 2s infinite ease-in-out;
+}
+
+@keyframes flightPulse {
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.15);
+        color: #800026;
+    }
+}
+
+/* 동적 항공사 로고 배치용 컨테이너 스타일 */
+.flight-path-airline-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #FFFFFF;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    border: 1px solid #F3A0B3;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(165, 0, 52, 0.08);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 카드 호버 시 로고 배지 시각 반응성 */
+.ticket-card:hover .flight-path-airline-logo {
+    transform: translate(-50%, -50%) scale(1.12);
+    box-shadow: 0 6px 12px rgba(165, 0, 52, 0.15);
+    border-color: #A50034;
+}
+
+/* 로고 흔들림(Wobble) 애니메이션 */
+.flight-logo-svg {
+    display: block;
+    animation: logoWobble 3s infinite ease-in-out;
+}
+
+@keyframes logoWobble {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-4deg);
+    }
+    75% {
+        transform: rotate(4deg);
+    }
+}
+
+/* 예약코드 뷰 토글 버튼 마이크로 애니메이션 */
+.eye-btn {
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.eye-btn:active {
+    transform: scale(0.85);
+}
+
+/* 탭 전환 시의 부드러운 애니메이션을 위한 클래스 */
+.tab-content {
+    animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 3. 신규 구글맵 위치 검색 및 PPT AI 요약 모달 관련 스타일 */
+.location-result-item {
+    transition: all 0.2s ease;
+}
+.location-result-item:hover {
+    background-color: #FFF5F7;
+    border-color: #F3A0B3;
+}
+
+/* 항공사 브랜드 테마 컬러 배지 및 테두리 설정 (티켓 카드와 매칭) */
+.ticket-card.airline-ke {
+    background: #F0F9FF; /* 대한항공 하늘색 소프트 스킨 */
+    border-color: #BAE6FD;
+}
+.ticket-card.airline-ke:hover {
+    border-color: #38BDF8;
+    box-shadow: 0 8px 25px rgba(56, 189, 248, 0.08);
+}
+.ticket-card.airline-oz {
+    background: #F9FAFB; /* 아시아나 연회색 소프트 스킨 */
+    border-color: #E5E7EB;
+}
+.ticket-card.airline-oz:hover {
+    border-color: #9CA3AF;
+    box-shadow: 0 8px 25px rgba(156, 163, 175, 0.08);
+}
+.ticket-card.airline-lcc {
+    background: #FFFBEB; /* LCC 황색/주황색 소프트 스킨 */
+    border-color: #FDE68A;
+}
+.ticket-card.airline-lcc:hover {
+    border-color: #F59E0B;
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.08);
+}
+
+/* 항공사 로고 렌더링용 중심 경로 컨테이너 */
+.flight-path-airline-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: inherit;
+    padding: 0 6px;
+    z-index: 2;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.ticket-card:hover .flight-path-airline-logo {
+    transform: translate(-50%, -52%) scale(1.08);
+}
+
+/* 항공사 로고 SVG 회전/흔들림 마이크로 애니메이션 */
+.airline-logo-svg {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
+    animation: wingWobble 4s infinite ease-in-out;
+}
+@keyframes wingWobble {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(3deg); }
+}
+
+/* PPT AI 요약 편집기 슬라이드 에디터 카드 스타일 */
+.slide-editor-card {
+    background: #FAFAFA;
+    border: 1px solid #E5E5E5;
+    border-radius: 12px;
+    padding: 12px;
+    transition: all 0.2s ease;
+}
+.slide-editor-card:focus-within {
+    border-color: #A50034;
+    background: #FFFDFE;
+    box-shadow: 0 0 0 2px rgba(165, 0, 52, 0.05);
+}
